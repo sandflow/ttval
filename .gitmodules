@@ -1,0 +1,3 @@
+[submodule "src/test/resources/ttml2-tests"]
+	path = src/test/resources/ttml2-tests
+	url = https://github.com/w3c/ttml2-tests

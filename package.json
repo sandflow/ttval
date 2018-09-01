@@ -1,0 +1,46 @@
+{
+    "name": "ttval",
+    "description": "TTML Validator",
+    "version": "1.0.0-alpha.1",
+    "publishConfig": {
+        "tag": "dev"
+    },
+    "license": "BSD-2-Clause",
+    "homepage": "https://github.com/sandflow/ttval",
+    "bugs": "https://github.com/sandflow/ttval/issues",
+    "repository": "github:sandflow/ttval",
+    "files": [
+        "src/main",
+        "README.txt"
+    ],
+    "keywords": [
+        "ttml",
+        "ttml2",
+        "ttml 2",
+        "ttml1",
+        "ttml 1",
+        "validator",
+        "validation"
+    ],
+    "author": "Pierre-Anthony Lemieux <pal@palemieux.com>",
+    "main": "src/main/js/main.js",
+    "directories": {
+        "test": "src/test"
+    },
+    "scripts": {
+        "preinstall": "npm run codegen",
+        "prepublishOnly": "npm run build",
+        "codegen": "jison src/main/grammar/condition.y src/main/lexicon/condition.l -o src/main/js/condition-parser.js",
+        "build": "npm run lint && npm run codegen && npm run test",
+        "test": "mocha --reporter min src/test/js/*.js",
+        "lint": "jshint --exclude-path .gitignore src/main/js/"
+    },
+    "dependencies": {
+        "sax": "1.2.1"
+    },
+    "devDependencies": {
+        "jison": "0.4.18",
+        "mocha": "latest",
+        "jshint": "latest"
+    }
+}
