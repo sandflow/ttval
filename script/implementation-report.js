@@ -80,7 +80,7 @@ valid_files.forEach(
         validator.validate(infoset, ttml2.Model, handler);
 
         /* remove .xml extension */
-            
+
         var testname = testfilename.slice(0, -4);
 
         test_results[testname] = handler.isError === false;
@@ -101,20 +101,23 @@ invalid_files.forEach(
         validator.validate(infoset, ttml2.Model, handler);
 
         /* remove .xml extension */
-            
+
         var testname = testfilename.slice(0, -4);
 
         test_results[testname] = handler.isError === true;
     }
 );
 
-var report = {};
+var report = {
+    'implementation': 'ttval',
+    'results': {}
+};
 
-for(var feature in tests) {
+for (var feature in tests) {
 
     var passed = true;
 
-    for(var i = 0; i < tests[feature].valid.length; i++) {
+    for (var i = 0; i < tests[feature].valid.length; i++) {
 
         if (tests[feature].valid[i]['exclude']) continue;
 
@@ -127,7 +130,7 @@ for(var feature in tests) {
     }
 
     if (passed) {
-        for(var i = 0; i < tests[feature].invalid.length; i++) {
+        for (var i = 0; i < tests[feature].invalid.length; i++) {
 
             if (tests[feature].invalid[i]['exclude']) continue;
 
@@ -141,14 +144,41 @@ for(var feature in tests) {
     }
 
 
-    report[feature] = passed ? "X" : "";
+    report.results[feature] = passed ? true : false;
 
 }
 
-for(var feature in report) {
+for (var feature in report.results) {
 
-    process.stdout.write(feature + "\t" + report[feature] + "\n");
+    process.stdout.write(feature + "\t" + (report.results[feature] ? "X" : "") + "\n");
+
+    if (!report.results[feature]) {
+
+        for (var i = 0; i < tests[feature].valid.length; i++) {
+
+            if (tests[feature].valid[i]['exclude']) continue;
+
+            if (!test_results[tests[feature].valid[i].test]) {
+                process.stdout.write("   " + tests[feature].valid[i].test + "\n");
+            };
+
+        }
+
+
+        for (var i = 0; i < tests[feature].invalid.length; i++) {
+
+            if (tests[feature].invalid[i]['exclude']) continue;
+
+            if (!test_results[tests[feature].invalid[i].test]) {
+                process.stdout.write("   " + tests[feature].invalid[i].test + "\n");
+            };
+
+        }
+
+    }
 
 }
+
+/*process.stdout.write(JSON.stringify(report, null, 2));*/
 
 

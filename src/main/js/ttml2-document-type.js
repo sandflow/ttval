@@ -155,6 +155,38 @@ ttp.attributes.add(
     )
 );
 
+
+ttp.attributes.add(
+    new model.Attribute(
+        names.NS_TTP,
+        "contentProfiles",
+        function (attr, errorHandler) {
+
+            if (!attr.value) {
+                errorHandler.error("Syntax error");
+                return;
+            }
+
+            var s_all = attr.value.match(/^all\(([^\)]*)\)$/);
+
+            if (s_all) {
+
+                if (!_isValidDesignators(s_all[1])) {
+                    errorHandler.error("Syntax error");
+                }
+
+                return;
+            }
+
+            if (!_isValidDesignators(attr.value)) {
+                errorHandler.error("Syntax error");
+                return;
+            }
+
+        }
+    )
+);
+
 ttp.attributes.add(
     new model.Attribute(
         names.NS_TTP,
@@ -1978,7 +2010,25 @@ ttp.elements.add(
             unqual.attributes.byName.designator,
             xml.attributes.byName.base,
             xml.attributes.byName.id
-        ]
+        ],
+        function (element, errorHandler) {
+            
+            if (element.parent && element.parent.name === ttp.elements.byName.profile.name) {
+
+                var our_type = unqual.attributes.byName.type.name in element.attributes
+                                ? element.attributes[unqual.attributes.byName.type.name].value : "processor";
+
+                var parent_type = unqual.attributes.byName.type.name in element.parent.attributes
+                                ? element.parent.attributes[unqual.attributes.byName.type.name].value : "processor";
+
+                if (our_type !== parent_type) {
+
+                    errorHandler.error("Invalid parent type");
+
+                }
+            }
+
+        }
     )
 );
 
