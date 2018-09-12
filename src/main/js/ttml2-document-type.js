@@ -82,7 +82,7 @@ function _isValidDesignators(str) {
 
     for (var i = 0; i < d.length; i++) {
 
-        if (! _isValidURI(d[i], names.NS_PROFILE)) {
+        if (!_isValidURI(d[i], names.NS_PROFILE)) {
             return false;
         }
 
@@ -571,7 +571,7 @@ function _isValidTextEmphasis(str) {
 
     for (var i = 0; i < c.length; i++) {
 
-       if (["before", "after", "outside"].indexOf(c[i]) !== -1 && (!isPosition)) {
+        if (["before", "after", "outside"].indexOf(c[i]) !== -1 && (!isPosition)) {
             isPosition = true;
         } else if ((_isValidColor(c[i]) || c[i] === "current") && (!isColor)) {
             isColor = true;
@@ -585,7 +585,7 @@ function _isValidTextEmphasis(str) {
         } else if (["circle", "dot", "sesame"].indexOf(c[i]) !== -1 && (!isShape)) {
             isStyle = true;
             isShape = true;
-        }else {
+        } else {
             return false;
         }
 
@@ -1343,7 +1343,7 @@ tts.attributes.add(
                 attr,
                 errorHandler,
                 function (value) {
-                    if (! _isValidTextEmphasis(value)) {
+                    if (!_isValidTextEmphasis(value)) {
                         errorHandler.error("Syntax error");
                     }
                 }
@@ -1363,6 +1363,77 @@ tts.attributes.add(
                 function (value) {
                     if (["mixed", "sideways", "sidewaysLeft", "sidewaysRight", "upright"].indexOf(value) === -1) {
                         errorHandler.error("Syntax error");
+                    }
+                }
+            );
+        }
+    )
+);
+
+tts.attributes.add(
+    new model.Attribute(
+        names.NS_TTS,
+        "textShadow",
+        function (attr, errorHandler) {
+            _handleAnimationValueList(
+                attr,
+                errorHandler,
+                function (value) {
+
+                    if (value === 'none') {
+                        return;
+                    }
+
+                    var shadows = value.split(/\s*,\s*/);
+
+                    if (shadows.length === 0) {
+
+                        errorHandler.error("Syntax error");
+                        return;
+
+                    }
+
+                    for (var i = 0; i < shadows.length; i++) {
+
+                        var c = shadows[i].split(/\s+/);
+
+                        if (c.length < 2 || c.length > 4) {
+
+                            errorHandler.error("Syntax error");
+                            return;
+
+                        }                        
+
+                        for (var j = 0; j < c.length; j++) {
+
+                            var l = parseLength(c[j]);
+
+                            if (!l) {
+
+                                if (!(
+                                    j === c.length - 1 &&
+                                    _isValidColor(c[c.length - 1])
+                                )) {
+
+                                    errorHandler.error("Syntax error");
+                                    return;
+
+                                }
+
+                            } else if (j === 2 && l.value < 0) {
+
+                                    errorHandler.error("Negative blur radius");
+                                    return;
+
+                            } else if (j === 3) {
+
+                                errorHandler.error("Syntax error");
+                                return;
+
+                            }
+
+                        }
+
                     }
                 }
             );
@@ -1634,7 +1705,7 @@ unqual.attributes.add(
         "",
         "designator",
         function (attr, errorHandler) {
-            if ((! ABSOLUTE_URI_RE.test(attr.value)) || _isFragment(attr.value)) {
+            if ((!ABSOLUTE_URI_RE.test(attr.value)) || _isFragment(attr.value)) {
                 errorHandler.error("Syntax error");
             }
         }
@@ -1937,7 +2008,7 @@ var REL_NOSCHEME_URI_RE = /^([\w\-.~@!$'()*+,;=]|(%[a-fA-F\d]{2}))+(\/[\w\:\/\?\
 
 function _isValidURI(value) {
 
-    
+
     if (ABSOLUTE_URI_RE.test(value)) {
 
         return true;
@@ -2012,14 +2083,14 @@ ttp.elements.add(
             xml.attributes.byName.id
         ],
         function (element, errorHandler) {
-            
+
             if (element.parent && element.parent.name === ttp.elements.byName.profile.name) {
 
-                var our_type = unqual.attributes.byName.type.name in element.attributes
-                                ? element.attributes[unqual.attributes.byName.type.name].value : "processor";
+                var our_type = unqual.attributes.byName.type.name in element.attributes ?
+                    element.attributes[unqual.attributes.byName.type.name].value : "processor";
 
-                var parent_type = unqual.attributes.byName.type.name in element.parent.attributes
-                                ? element.parent.attributes[unqual.attributes.byName.type.name].value : "processor";
+                var parent_type = unqual.attributes.byName.type.name in element.parent.attributes ?
+                    element.parent.attributes[unqual.attributes.byName.type.name].value : "processor";
 
                 if (our_type !== parent_type) {
 
