@@ -36,11 +36,11 @@
         "lint": "jshint --exclude-path .gitignore src/main/js/"
     },
     "dependencies": {
-        "sax": "1.2.1"
+        "sax": "1.2.4"
     },
     "devDependencies": {
         "jison": "0.4.18",
-        "jshint": "^2.9.6",
+        "jshint": "^2.13.1",
         "mocha": "^5.2.0"
     }
 }
